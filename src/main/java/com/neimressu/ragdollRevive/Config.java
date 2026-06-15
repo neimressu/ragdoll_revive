@@ -1,0 +1,38 @@
+package com.neimressu.ragdollRevive;
+
+import net.neoforged.neoforge.common.ModConfigSpec;
+import java.util.List;
+
+public class Config {
+    public static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
+    public static final ModConfigSpec SPEC;
+
+    public static final ModConfigSpec.IntValue REVIVE_TIME;
+    public static final ModConfigSpec.DoubleValue HEALTH_AFTER_REVIVE;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> REVIVE_ITEMS;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> EXCLUDED_DAMAGE;
+
+    static {
+        BUILDER.push("Revive Settings");
+
+        REVIVE_TIME = BUILDER
+                .comment("Time to revive a player in ticks (20 ticks = 1 second)")
+                .defineInRange("reviveTime", 600, 1, Integer.MAX_VALUE);
+        HEALTH_AFTER_REVIVE = BUILDER
+                .comment("How much health player has after revive")
+                .defineInRange("healthAfterRevive", 6.0, 0.0,Float.MAX_VALUE);
+        REVIVE_ITEMS = BUILDER
+                .comment("Items that revive player")
+                .defineList("reviveItems",
+                        List.of("minecraft:heart_of_the_sea", "minecraft:honey_bottle"),
+                        obj -> obj instanceof String);
+        EXCLUDED_DAMAGE = BUILDER
+                .comment("Damage that will always kill")
+                .defineList("excludedDamage",
+                        List.of("minecraft:fall", "minecraft:generic_kill"),
+                        obj -> obj instanceof String);
+
+        BUILDER.pop();
+        SPEC = BUILDER.build();
+    }
+}
