@@ -5,19 +5,23 @@ import dev.leo.sableplayerragdoll.api.RagdollSession;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.neoforged.neoforge.common.NeoForge;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 public final class ReviveAPI {
 
+    private static final Logger log = LogManager.getLogger(ReviveAPI.class);
+
     /**
      * A method for programmatically reviving a player. It can be called from anywhere, including commands or other mods.
      * * @param target The player to be revived.
+     *
      * @param reviver The player performing the revival (set to null if the system or a command is performing the revival).
-     * @return true if the player was indeed dead and was successfully revived; false otherwise.
      */
-    public static boolean revivePlayer(ServerPlayer target, @Nullable ServerPlayer reviver) {
+    public static void revivePlayer(ServerPlayer target, @Nullable ServerPlayer reviver) {
         if (!target.getPersistentData().getBoolean("isDying")) {
-            return false;
+            return;
         }
         target.removeEffect(MobEffects.DARKNESS);
         target.removeEffect(MobEffects.BLINDNESS);
@@ -39,6 +43,17 @@ public final class ReviveAPI {
         target.setHealth(ReviveManager.getHealthAfterRevive());
 
         NeoForge.EVENT_BUS.post(new PlayerRevivedEvent(target, reviver));
-        return true;
+    }
+
+    public static void extendReviveTime(ServerPlayer target, int ticks) {
+        if (!target.getPersistentData().getBoolean("isDying")) {
+            return;
+        }
+        ReviveManager.DYING.computeIfPresent(target.getUUID(), (k, data) -> new ReviveManager.DyingPlayer(
+                data.uuid(),
+                data.expireTick() + ticks,
+                data.session(),
+                data.damageSource()
+        ));
     }
 }

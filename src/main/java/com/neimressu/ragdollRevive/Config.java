@@ -11,12 +11,13 @@ public class Config {
     public static final ModConfigSpec.DoubleValue HEALTH_AFTER_REVIVE;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> REVIVE_ITEMS;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> EXCLUDED_DAMAGE;
+    public static final ModConfigSpec.ConfigValue<List<?extends String>> EXTEND_ITEMS;
 
     static {
         BUILDER.push("Revive Settings");
 
         REVIVE_TIME = BUILDER
-                .comment("Time to revive a player in ticks (20 ticks = 1 second)")
+                .comment("Time to revive a player in ticks")
                 .defineInRange("reviveTime", 600, 1, Integer.MAX_VALUE);
         HEALTH_AFTER_REVIVE = BUILDER
                 .comment("How much health player has after revive")
@@ -31,7 +32,12 @@ public class Config {
                 .defineList("excludedDamage",
                         List.of("minecraft:fall", "minecraft:generic_kill"),
                         obj -> obj instanceof String);
-
+        EXTEND_ITEMS = BUILDER
+                .comment("Items that extends revive time in ticks")
+                .comment("Example: 'minecraft:golden_apple:1600'. Will increase revive time by 1600 ticks")
+                .defineList("extendItems",
+                        List.of("minecraft:paper:100"),
+                        obj -> obj instanceof String);
         BUILDER.pop();
         SPEC = BUILDER.build();
     }

@@ -13,7 +13,6 @@ public class RagdollRevive {
     private static final Logger log = LoggerFactory.getLogger(RagdollRevive.class);
 
     public RagdollRevive(IEventBus modEventBus, ModContainer modContainer) {
-        log.debug("Hello!");
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 }
