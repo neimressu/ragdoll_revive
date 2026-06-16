@@ -41,7 +41,7 @@ public class TickHandler {
             player.getPersistentData()
                     .putBoolean("mustDie", true);
 
-            data.session().release();
+            if (!ReviveManager.isRagdollCorpseEnabled()) data.session().release();
 
             player.hurt(data.damageSource(),Float.MAX_VALUE);
             player.setDeltaMovement(Vec3.ZERO);

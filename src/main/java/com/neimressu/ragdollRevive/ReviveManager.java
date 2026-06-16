@@ -4,6 +4,7 @@ import dev.leo.sableplayerragdoll.api.RagdollSession;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.fml.ModList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,6 +39,10 @@ public final class ReviveManager {
             }
         }
         return false;
+    }
+
+    public static boolean isRagdollCorpseEnabled() {
+        return ModList.get().isLoaded("ragdoll_corpse");
     }
 
     public static boolean isExcludedDamage(String damageType) {

@@ -28,6 +28,9 @@ public class DamageHandler {
     public static void onDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player))
             return;
+
+        if (player.getPersistentData().getBoolean("isDying")) return;
+
         if (player.getPersistentData().getBoolean("mustDie")) {
             player.getPersistentData().putBoolean("mustDie", false);
             player.getPersistentData().putBoolean("isDying", false);
@@ -46,7 +49,9 @@ public class DamageHandler {
             return;
         }
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        assert server != null;
+        if (server == null) {
+            return;
+        }
         int playerCount = server.getPlayerCount();
 
         if (playerCount <= 1) {
