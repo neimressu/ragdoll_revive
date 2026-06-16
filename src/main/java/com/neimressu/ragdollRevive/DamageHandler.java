@@ -5,6 +5,7 @@ import dev.leo.sableplayerragdoll.api.RagdollSession;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -13,6 +14,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.minecraft.ChatFormatting;
+import net.neoforged.neoforge.event.server.ServerLifecycleEvent;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,7 +37,13 @@ public class DamageHandler {
             event.setCanceled(true);
             return;
         }
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        assert server != null;
+        int playerCount = server.getPlayerCount();
 
+        if (playerCount <= 1) {
+            return;
+        }
         boolean isCanceled = NeoForge.EVENT_BUS.post(new PlayerCritStateEvent(player)).isCanceled();
 
         if (isCanceled) {
