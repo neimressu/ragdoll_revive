@@ -15,8 +15,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
-
 @EventBusSubscriber(modid = RagdollRevive.MODID)
 public class ReviveHandler {
 

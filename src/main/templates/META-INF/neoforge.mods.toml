@@ -77,17 +77,17 @@ side = "BOTH"
 modId = "sable"
 type = "required"
 # This version range declares a minimum of the current minecraft version up to but not including the next major version
-versionRange = "[2,)"
+versionRange = "[2.0.0,)"
 ordering = "NONE"
-side = "SERVER"
+side = "BOTH"
 
 [[dependencies."${mod_id}"]]
 modId = "sable_player_ragdoll"
 type = "required"
 # This version range declares a minimum of the current minecraft version up to but not including the next major version
-versionRange = "[0.6,)"
+versionRange = "[0.6.7,)"
 ordering = "NONE"
-side = "SERVER"
+side = "BOTH"
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
 # that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't
 # stop your mod loading on the server for example.

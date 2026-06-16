@@ -10,6 +10,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.minecraft.ChatFormatting;
 import org.apache.logging.log4j.LogManager;
@@ -34,12 +35,17 @@ public class DamageHandler {
             return;
         }
 
+        boolean isCanceled = NeoForge.EVENT_BUS.post(new PlayerCritStateEvent(player)).isCanceled();
+
+        if (isCanceled) {
+            return;
+        }
+
         DamageSource source = event.getSource();
         String damageType = source.typeHolder().getRegisteredName();
         log.debug(event.getSource().type().toString());
         if (ReviveManager.isExcludedDamage(damageType))
             return;
-
         RagdollSession session;
         if (!RagdollAPI.isRagdolled(player)) {
             session = RagdollAPI.launch(
