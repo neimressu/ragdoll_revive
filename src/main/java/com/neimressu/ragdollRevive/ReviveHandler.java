@@ -25,9 +25,6 @@ public class ReviveHandler {
 
         if (!(event.getEntity() instanceof ServerPlayer player))
             return;
-        if (player.getPersistentData().getBoolean("isDying")) {
-            return;
-        }
         String itemId =
                 BuiltInRegistries.ITEM
                         .getKey(event.getItemStack().getItem())
@@ -38,6 +35,7 @@ public class ReviveHandler {
         if (!isReviveItem && !isExtendItem) {
             return;
         }
+
         HitResult hit = player.pick(5.0D, 0.0F, false);
         if (hit.getType() != HitResult.Type.BLOCK) return;
 
@@ -47,13 +45,15 @@ public class ReviveHandler {
         if (!(be instanceof RagdollPartBlockEntity ragdollPart)) return;
 
         var provider = be.getLevel().registryAccess();
-        log.info("Block NBT: {}", be.saveWithFullMetadata(provider).getAsString());
         String skinName = ragdollPart.saveWithFullMetadata(provider).getString("SkinName");
         log.debug(skinName);
 
         ServerPlayer target = player.server.getPlayerList().getPlayerByName(skinName);
 
-        if (target != null && target.getPersistentData().getBoolean("isDying")) {
+        assert target != null;
+        if (player.distanceTo(target)>5) { return; }
+
+        if (target.getPersistentData().getBoolean("isDying")) {
             if (isExtendItem) {
                 ReviveAPI.extendReviveTime(target, ReviveManager.getExtensionTicks(itemId));
                 target.sendSystemMessage(Component.literal("Your revive time has been extended").withStyle(ChatFormatting.YELLOW));
@@ -66,7 +66,7 @@ public class ReviveHandler {
             }
             ReviveAPI.revivePlayer(target, player);
             target.sendSystemMessage(Component.literal("You have been revived by " + player.getName().getString()).withStyle(ChatFormatting.GREEN));
-            target.sendSystemMessage(Component.literal("You revived " + target.getName().getString()).withStyle(ChatFormatting.GREEN));
+            player.sendSystemMessage(Component.literal("You revived " + target.getName().getString()).withStyle(ChatFormatting.GREEN));
             ReviveManager.removeItem(event.getItemStack(),player);
         }
     }

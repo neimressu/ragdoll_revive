@@ -12,6 +12,7 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<List<? extends String>> REVIVE_ITEMS;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> EXCLUDED_DAMAGE;
     public static final ModConfigSpec.ConfigValue<List<?extends String>> EXTEND_ITEMS;
+    public static final ModConfigSpec.BooleanValue INVULNERABLE_IN_CRIT_STATE;
 
     static {
         BUILDER.push("Revive Settings");
@@ -38,6 +39,9 @@ public class Config {
                 .defineList("extendItems",
                         List.of("minecraft:paper:100"),
                         obj -> obj instanceof String);
+        INVULNERABLE_IN_CRIT_STATE = BUILDER
+                .comment("Odes player invulnerable while  in crit state")
+                        .define("isInvulnerableInCritState",true);
         BUILDER.pop();
         SPEC = BUILDER.build();
     }

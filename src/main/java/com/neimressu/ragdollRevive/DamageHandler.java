@@ -9,6 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForge;
@@ -33,8 +34,16 @@ public class DamageHandler {
             player.getPersistentData().putBoolean("isDying", false);
             return;
         }
-        if (player.getPersistentData().getBoolean("isDying")) {
-            event.setCanceled(true);
+
+        if (!ReviveManager.isInvulnerableInCritState() && player.getPersistentData().getBoolean("isDying")) {
+            RagdollSession session = RagdollAPI.activeSession(player);
+            session.setDismountLocked(false);
+            session.release();
+            player.removeEffect(MobEffects.DARKNESS);
+            player.removeEffect(MobEffects.BLINDNESS);
+            player.getPersistentData().putBoolean("mustDie", true);
+            player.setDeltaMovement(Vec3.ZERO);
+            ReviveManager.DYING.remove(player.getUUID());
             return;
         }
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
@@ -44,6 +53,10 @@ public class DamageHandler {
         if (playerCount <= 1) {
             return;
         }
+        if (player.getPersistentData().getBoolean("isDying") && ReviveManager.isInvulnerableInCritState()) {
+            return;
+        }
+
         boolean isCanceled = NeoForge.EVENT_BUS.post(new PlayerCritStateEvent(player)).isCanceled();
 
         if (isCanceled) {
@@ -67,7 +80,9 @@ public class DamageHandler {
         if (session == null) return;
         session.setDismountLocked(true);
 
-        player.setInvulnerable(true);
+        if (ReviveManager.isInvulnerableInCritState()) {
+            player.setInvulnerable(true);
+        }
         player.setHealth(6.0F);
 
         player.getPersistentData().putBoolean("isDying", true);

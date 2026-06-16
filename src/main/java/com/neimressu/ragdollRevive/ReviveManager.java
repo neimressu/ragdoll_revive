@@ -44,6 +44,10 @@ public final class ReviveManager {
         return Config.EXCLUDED_DAMAGE.get().contains(damageType);
     }
 
+    public static boolean isInvulnerableInCritState() {
+        return Config.INVULNERABLE_IN_CRIT_STATE.getAsBoolean();
+    }
+
     public static float getHealthAfterRevive() { return Config.HEALTH_AFTER_REVIVE.get().floatValue(); }
 
     public static int getExtensionTicks(String itemId) {

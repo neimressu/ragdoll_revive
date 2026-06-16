@@ -4,10 +4,15 @@ import dev.leo.sableplayerragdoll.api.RagdollAPI;
 import dev.leo.sableplayerragdoll.api.RagdollSession;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
+
+import java.sql.Array;
+import java.util.AbstractList;
+import java.util.ArrayList;
 
 public final class ReviveAPI {
 
@@ -55,5 +60,29 @@ public final class ReviveAPI {
                 data.session(),
                 data.damageSource()
         ));
+    }
+
+    public static void killDyingPlayer(ServerPlayer target) {
+        if (!target.getPersistentData().getBoolean("isDying")) {
+            return;
+        }
+
+        target.getPersistentData()
+                .putBoolean("mustDie", true);
+
+        target.setInvulnerable(false);
+
+        target.kill();
+        target.setDeltaMovement(Vec3.ZERO);
+
+        ReviveManager.DYING.remove(
+                target.getUUID()
+        );
+    }
+
+    public AbstractList<ReviveManager.DyingPlayer> getDyingPlayers() {
+        return new ArrayList<>(
+                ReviveManager.DYING.values()
+        );
     }
 }
