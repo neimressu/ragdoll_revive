@@ -1,0 +1,11 @@
+{
+  "required": false,
+  "package": "com.neimressu.ragdollRevive.Mixins",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "CorpseDeathHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
