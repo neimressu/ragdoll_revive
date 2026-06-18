@@ -13,6 +13,7 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<List<? extends String>> EXCLUDED_DAMAGE;
     public static final ModConfigSpec.ConfigValue<List<?extends String>> EXTEND_ITEMS;
     public static final ModConfigSpec.BooleanValue INVULNERABLE_IN_CRIT_STATE;
+    public static final ModConfigSpec.ConfigValue<String> REVIVE_SOUND;
 
     static {
         BUILDER.push("Revive Settings");
@@ -42,6 +43,9 @@ public class Config {
         INVULNERABLE_IN_CRIT_STATE = BUILDER
                 .comment("Odes player invulnerable while  in crit state")
                         .define("isInvulnerableInCritState",true);
+        REVIVE_SOUND = BUILDER
+                .comment("Sound that revived player hears upon reviving")
+                        .define("reviveSound","minecraft:block.conduit.deactivate");
         BUILDER.pop();
         SPEC = BUILDER.build();
     }

@@ -19,6 +19,8 @@ import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static java.lang.Float.NaN;
+
 @EventBusSubscriber(modid = RagdollRevive.MODID)
 public class DamageHandler {
 
@@ -88,7 +90,6 @@ public class DamageHandler {
             player.setInvulnerable(true);
         }
         player.setHealth(6.0F);
-
         player.getPersistentData().putBoolean("isDying", true);
 
         player.addEffect(new MobEffectInstance(MobEffects.DARKNESS, Integer.MAX_VALUE, 0, false, false));

@@ -7,6 +7,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.*;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -54,20 +55,23 @@ public class ReviveHandler {
         if (player.distanceTo(target)>5) { return; }
 
         if (target.getPersistentData().getBoolean("isDying")) {
-            if (isExtendItem) {
-                ReviveAPI.extendReviveTime(target, ReviveManager.getExtensionTicks(itemId));
-                target.sendSystemMessage(Component.literal("Your revive time has been extended").withStyle(ChatFormatting.YELLOW));
-                player.sendSystemMessage(Component.literal("You extended revive time of " + target.getName().getString() +
-                                " by " + ReviveManager.getExtensionTicks(itemId) / 20 +
-                                " seconds")
-                        .withStyle(ChatFormatting.YELLOW));
-                ReviveManager.removeItem(event.getItemStack(),player);
+            if (!isExtendItem) {
+                ReviveAPI.revivePlayer(target, player);
+                target.sendSystemMessage(Component.literal("You have been revived by " + player.getName().getString()).withStyle(ChatFormatting.GREEN));
+                player.sendSystemMessage(Component.literal("You revived " + target.getName().getString()).withStyle(ChatFormatting.GREEN));
+                ReviveManager.removeItem(event.getItemStack(),player, player.getUsedItemHand());
+                ReviveManager.playReviveSound(target);
+                event.setCanceled(true);
                 return;
             }
-            ReviveAPI.revivePlayer(target, player);
-            target.sendSystemMessage(Component.literal("You have been revived by " + player.getName().getString()).withStyle(ChatFormatting.GREEN));
-            player.sendSystemMessage(Component.literal("You revived " + target.getName().getString()).withStyle(ChatFormatting.GREEN));
-            ReviveManager.removeItem(event.getItemStack(),player);
+            ReviveAPI.extendReviveTime(target, ReviveManager.getExtensionTicks(itemId));
+            target.sendSystemMessage(Component.literal("Your revive time has been extended").withStyle(ChatFormatting.YELLOW));
+            player.sendSystemMessage(Component.literal("You extended revive time of " + target.getName().getString() +
+                            " by " + ReviveManager.getExtensionTicks(itemId) / 20 +
+                            " seconds")
+                    .withStyle(ChatFormatting.YELLOW));
+            ReviveManager.removeItem(event.getItemStack(),player, player.getUsedItemHand());
+            event.setCanceled(true);
         }
     }
 }

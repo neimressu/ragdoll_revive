@@ -1,8 +1,17 @@
 package com.neimressu.ragdollRevive;
 
 import dev.leo.sableplayerragdoll.api.RagdollSession;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
 import org.apache.logging.log4j.LogManager;
@@ -71,12 +80,31 @@ public final class ReviveManager {
         return 0;
     }
 
-    public static void removeItem(ItemStack item, ServerPlayer player) {
+    public static void removeItem(ItemStack item, ServerPlayer player, InteractionHand hand) {
         if (player.isCreative()) { return; }
+        if (item.getMaxDamage()>1) {
+            log.debug("{}:{}", item.getDamageValue(), item.getMaxDamage());
+            item.hurtAndBreak(
+                    1,
+                    player,
+                    LivingEntity.getSlotForHand(hand)
+            );
+        } else item.shrink(1);
         ItemStack remainder = item.getCraftingRemainingItem();
-        item.shrink(1);
         if (!remainder.isEmpty()) {
             player.addItem(remainder);
         }
+    }
+
+    public static void playReviveSound(ServerPlayer player) {
+        SoundEvent sound = BuiltInRegistries.SOUND_EVENT
+                .get(ResourceLocation.parse(Config.REVIVE_SOUND.get()));
+        if (sound == null) return;
+        player.playNotifySound(
+                sound,
+                SoundSource.PLAYERS,
+                0.7f,
+                1.0f
+        );
     }
 }
