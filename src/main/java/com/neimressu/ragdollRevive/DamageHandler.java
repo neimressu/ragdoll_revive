@@ -15,11 +15,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.minecraft.ChatFormatting;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import static java.lang.Float.NaN;
 
 @EventBusSubscriber(modid = RagdollRevive.MODID)
 public class DamageHandler {
@@ -30,6 +27,9 @@ public class DamageHandler {
     public static void onDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player))
             return;
+        MinecraftServer server = event.getEntity().getServer();
+        if (server == null) return;
+        if (ReviveManager.isLonePlayer(server)) return;
 
         if (player.getPersistentData().getBoolean("isDying")) return;
 
@@ -41,6 +41,7 @@ public class DamageHandler {
 
         if (!ReviveManager.isInvulnerableInCritState() && player.getPersistentData().getBoolean("isDying")) {
             RagdollSession session = RagdollAPI.activeSession(player);
+            if (session == null) return;
             session.setDismountLocked(false);
             session.release();
             player.removeEffect(MobEffects.DARKNESS);
@@ -48,15 +49,6 @@ public class DamageHandler {
             player.getPersistentData().putBoolean("mustDie", true);
             player.setDeltaMovement(Vec3.ZERO);
             ReviveManager.DYING.remove(player.getUUID());
-            return;
-        }
-        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        if (server == null) {
-            return;
-        }
-        int playerCount = server.getPlayerCount();
-
-        if (playerCount <= 1) {
             return;
         }
         if (player.getPersistentData().getBoolean("isDying") && ReviveManager.isInvulnerableInCritState()) {

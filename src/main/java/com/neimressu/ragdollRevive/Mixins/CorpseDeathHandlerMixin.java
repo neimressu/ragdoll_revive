@@ -6,7 +6,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,6 +18,11 @@ public class CorpseDeathHandlerMixin {
     @Inject(method = "onPlayerDeath", at = @At("HEAD"), cancellable = true, remap = false)
     private static void onPlayerDeathCheck(LivingDeathEvent event, CallbackInfo ci) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            MinecraftServer server = event.getEntity().getServer();
+            if (server == null) return;
+
+            if (ReviveManager.isLonePlayer(server)) return;
+
             if (!player.getPersistentData().getBoolean("isDying")) {
                 ci.cancel();
             } else {
