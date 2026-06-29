@@ -63,7 +63,6 @@ public class DamageHandler {
 
         DamageSource source = event.getSource();
         String damageType = source.typeHolder().getRegisteredName();
-        log.debug(event.getSource().type().toString());
         if (ReviveManager.isExcludedDamage(damageType))
             return;
         RagdollSession session;
@@ -96,11 +95,22 @@ public class DamageHandler {
                         source
                 )
         );
+        ReviveManager.GIVINGUP.put(
+                player.getUUID(),
+                new ReviveManager.GivingUp(
+                        player.getUUID(),
+                        Config.GIVE_UP_TIMER.get(),
+                        false
+                )
+        );
 
         player.sendSystemMessage(
                 Component.literal("You are dying! Other players have " +
                                 ReviveManager.getReviveTime() / 20 +
-                                " seconds to revive you!")
+                                " seconds to revive you!" +
+                                "\nOr you can give up, by holding crouch key for " +
+                                Config.GIVE_UP_TIMER.getAsInt()/20 +
+                                " seconds")
                         .withStyle(ChatFormatting.RED)
         );
         event.setCanceled(true);

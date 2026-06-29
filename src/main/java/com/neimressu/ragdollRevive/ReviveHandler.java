@@ -47,7 +47,6 @@ public class ReviveHandler {
 
         var provider = be.getLevel().registryAccess();
         String skinName = ragdollPart.saveWithFullMetadata(provider).getString("SkinName");
-        log.debug(skinName);
 
         ServerPlayer target = player.server.getPlayerList().getPlayerByName(skinName);
 

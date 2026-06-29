@@ -31,6 +31,7 @@ public class CorpseDeathHandlerMixin {
                 player.getPersistentData().putBoolean("mustDie", true);
                 player.setDeltaMovement(Vec3.ZERO);
                 ReviveManager.DYING.remove(player.getUUID());
+                ReviveManager.GIVINGUP.remove(player.getUUID());
             }
         }
     }

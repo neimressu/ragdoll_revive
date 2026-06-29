@@ -44,7 +44,9 @@ public final class ReviveAPI {
         }
 
         ReviveManager.DYING.remove(target.getUUID());
-
+        ReviveManager.GIVINGUP.remove(
+                target.getUUID()
+        );
         target.setHealth(ReviveManager.getHealthAfterRevive());
 
         NeoForge.EVENT_BUS.post(new PlayerRevivedEvent(target, reviver));
@@ -76,6 +78,9 @@ public final class ReviveAPI {
         target.setDeltaMovement(Vec3.ZERO);
 
         ReviveManager.DYING.remove(
+                target.getUUID()
+        );
+        ReviveManager.GIVINGUP.remove(
                 target.getUUID()
         );
     }

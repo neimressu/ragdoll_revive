@@ -20,6 +20,7 @@ import java.util.*;
 public final class ReviveManager {
 
     public static final Map<UUID, DyingPlayer> DYING = new HashMap<>();
+    public static final Map<UUID, GivingUp> GIVINGUP = new HashMap<>();
     private static final Logger log = LogManager.getLogger(ReviveManager.class);
 
     public record DyingPlayer(
@@ -27,6 +28,12 @@ public final class ReviveManager {
             long expireTick,
             RagdollSession session,
             DamageSource damageSource
+    ) {}
+
+    public record GivingUp(
+            UUID uuid,
+            int givingTick,
+            boolean oldKeyState
     ) {}
 
     public static int getReviveTime() {
@@ -95,8 +102,10 @@ public final class ReviveManager {
     }
 
     public static void playReviveSound(ServerPlayer player) {
+        if (Config.REVIVE_SOUND.get().equalsIgnoreCase("DISABLE")) return;
         SoundEvent sound = BuiltInRegistries.SOUND_EVENT
                 .get(ResourceLocation.parse(Config.REVIVE_SOUND.get()));
+
         if (sound == null) return;
         player.playNotifySound(
                 sound,
