@@ -1,11 +1,12 @@
 package com.neimressu.ragdollRevive;
 
+import com.neimressu.ragdollRevive.Network.TimerPayLoad;
 import dev.leo.sableplayerragdoll.api.RagdollAPI;
 import dev.leo.sableplayerragdoll.api.RagdollSession;
-
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -14,7 +15,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.minecraft.ChatFormatting;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -49,6 +50,8 @@ public class DamageHandler {
             player.getPersistentData().putBoolean("mustDie", true);
             player.setDeltaMovement(Vec3.ZERO);
             ReviveManager.DYING.remove(player.getUUID());
+            ReviveManager.GIVINGUP.remove(player.getUUID());
+            PacketDistributor.sendToPlayer(player, new TimerPayLoad(0,1));
             return;
         }
         if (player.getPersistentData().getBoolean("isDying") && ReviveManager.isInvulnerableInCritState()) {
@@ -90,7 +93,7 @@ public class DamageHandler {
                 player.getUUID(),
                 new ReviveManager.DyingPlayer(
                         player.getUUID(),
-                        player.serverLevel().getGameTime() + ReviveManager.getReviveTime(),
+                        (int) (player.serverLevel().getGameTime() + ReviveManager.getReviveTime()),
                         session,
                         source
                 )
@@ -99,20 +102,24 @@ public class DamageHandler {
                 player.getUUID(),
                 new ReviveManager.GivingUp(
                         player.getUUID(),
-                        Config.GIVE_UP_TIMER.get(),
+                        CommonConfig.GIVE_UP_TIMER.get(),
                         false
                 )
         );
 
-        player.sendSystemMessage(
-                Component.literal("You are dying! Other players have " +
-                                ReviveManager.getReviveTime() / 20 +
-                                " seconds to revive you!" +
-                                "\nOr you can give up, by holding crouch key for " +
-                                Config.GIVE_UP_TIMER.getAsInt()/20 +
-                                " seconds")
-                        .withStyle(ChatFormatting.RED)
+        player.sendSystemMessage(Component.translatable("text.player.is_dying",
+                ReviveManager.getReviveTime() / 20
+                ).withStyle(ChatFormatting.RED)
         );
+        if (CommonConfig.CAN_PLAYER_GIVE_UP.getAsBoolean()) {
+            player.sendSystemMessage(
+                    Component.translatable("text.player.can_give_up",
+                            Component.translatable("key.sneak"),
+                            CommonConfig.GIVE_UP_TIMER.getAsInt()/20
+                    ).withStyle(ChatFormatting.RED)
+            );
+        }
+        PacketDistributor.sendToPlayer(player, new TimerPayLoad(ReviveManager.getReviveTime(),1));
         event.setCanceled(true);
     }
 }

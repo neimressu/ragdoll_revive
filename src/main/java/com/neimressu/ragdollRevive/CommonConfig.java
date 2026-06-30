@@ -1,10 +1,9 @@
 package com.neimressu.ragdollRevive;
 
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import java.util.List;
 
-public class Config {
+public class CommonConfig {
     public static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
     public static final ModConfigSpec SPEC;
 
@@ -16,6 +15,9 @@ public class Config {
     public static final ModConfigSpec.BooleanValue INVULNERABLE_IN_CRIT_STATE;
     public static final ModConfigSpec.ConfigValue<String> REVIVE_SOUND;
     public static final ModConfigSpec.IntValue GIVE_UP_TIMER;
+    public static final ModConfigSpec.BooleanValue CAN_PLAYER_GIVE_UP;
+    public static final ModConfigSpec.BooleanValue CAN_BE_REVIVED_IN_SP;
+    public static final ModConfigSpec.IntValue NETWORK_REFRESH;
 
     static {
         BUILDER.push("Revive Settings");
@@ -51,6 +53,15 @@ public class Config {
         GIVE_UP_TIMER = BUILDER
                 .comment("Time in ticks that takes for player to give up")
                         .defineInRange("giveUpTimer",100,1,Integer.MAX_VALUE);
+        CAN_PLAYER_GIVE_UP = BUILDER
+                .comment("Can player give up?")
+                        .define("canPlayerGiveUp",true);
+        CAN_BE_REVIVED_IN_SP = BUILDER
+                .comment("Can player be in crit state while in the singleplayer world?")
+                        .define("canBeRevivedInSp",false);
+        NETWORK_REFRESH = BUILDER
+                .comment("How often in ticks players will receive more fresh info. Low values may impact on the networking performance (Requires server restart)")
+                        .defineInRange("networkRefresh",200,20,Integer.MAX_VALUE);
         BUILDER.pop();
         SPEC = BUILDER.build();
     }

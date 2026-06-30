@@ -15,7 +15,9 @@ import net.neoforged.fml.ModList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public final class ReviveManager {
 
@@ -25,7 +27,7 @@ public final class ReviveManager {
 
     public record DyingPlayer(
             UUID uuid,
-            long expireTick,
+            int expireTick,
             RagdollSession session,
             DamageSource damageSource
     ) {}
@@ -37,15 +39,15 @@ public final class ReviveManager {
     ) {}
 
     public static int getReviveTime() {
-        return Config.REVIVE_TIME.get();
+        return CommonConfig.REVIVE_TIME.get();
     }
 
     public static boolean isValidReviveItem(String itemId) {
-        return Config.REVIVE_ITEMS.get().contains(itemId);
+        return CommonConfig.REVIVE_ITEMS.get().contains(itemId);
     }
 
     public static boolean isValidExtendItem(String itemId) {
-        for (String entry : Config.EXTEND_ITEMS.get()) {
+        for (String entry : CommonConfig.EXTEND_ITEMS.get()) {
             String[] parts = entry.split(":");
             String itemInConfig = parts[0] + ":" + parts[1];
             if (itemInConfig.equals(itemId)) {
@@ -60,17 +62,17 @@ public final class ReviveManager {
     }
 
     public static boolean isExcludedDamage(String damageType) {
-        return Config.EXCLUDED_DAMAGE.get().contains(damageType);
+        return CommonConfig.EXCLUDED_DAMAGE.get().contains(damageType);
     }
 
     public static boolean isInvulnerableInCritState() {
-        return Config.INVULNERABLE_IN_CRIT_STATE.getAsBoolean();
+        return CommonConfig.INVULNERABLE_IN_CRIT_STATE.getAsBoolean();
     }
 
-    public static float getHealthAfterRevive() { return Config.HEALTH_AFTER_REVIVE.get().floatValue(); }
+    public static float getHealthAfterRevive() { return CommonConfig.HEALTH_AFTER_REVIVE.get().floatValue(); }
 
     public static int getExtensionTicks(String itemId) {
-        for (String entry : Config.EXTEND_ITEMS.get()) {
+        for (String entry : CommonConfig.EXTEND_ITEMS.get()) {
             String[] parts = entry.split(":");
             String entryItemId = parts[0] + ":" + parts[1];
 
@@ -87,6 +89,7 @@ public final class ReviveManager {
 
     public static void removeItem(ItemStack item, ServerPlayer player, InteractionHand hand) {
         if (player.isCreative()) { return; }
+        ItemStack remainder = item.getCraftingRemainingItem();
         if (item.getMaxDamage()>1) {
             log.debug("{}:{}", item.getDamageValue(), item.getMaxDamage());
             item.hurtAndBreak(
@@ -95,16 +98,15 @@ public final class ReviveManager {
                     LivingEntity.getSlotForHand(hand)
             );
         } else item.shrink(1);
-        ItemStack remainder = item.getCraftingRemainingItem();
         if (!remainder.isEmpty()) {
             player.addItem(remainder);
         }
     }
 
     public static void playReviveSound(ServerPlayer player) {
-        if (Config.REVIVE_SOUND.get().equalsIgnoreCase("DISABLE")) return;
+        if (CommonConfig.REVIVE_SOUND.get().equalsIgnoreCase("DISABLE")) return;
         SoundEvent sound = BuiltInRegistries.SOUND_EVENT
-                .get(ResourceLocation.parse(Config.REVIVE_SOUND.get()));
+                .get(ResourceLocation.parse(CommonConfig.REVIVE_SOUND.get()));
 
         if (sound == null) return;
         player.playNotifySound(
@@ -116,6 +118,8 @@ public final class ReviveManager {
     }
 
     public static boolean isLonePlayer(MinecraftServer server) {
-        return server.getPlayerCount() <= 1;
+        if (!CommonConfig.CAN_BE_REVIVED_IN_SP.getAsBoolean()) {
+            return server.getPlayerCount() <= 1;
+        } else return false;
     }
 }

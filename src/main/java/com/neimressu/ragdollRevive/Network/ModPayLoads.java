@@ -17,5 +17,11 @@ public class ModPayLoads {
                 GiveUpPayload.STREAM_CODEC,
                 ServerPayLoadHandler::handle
         );
+
+        registrar.playToClient(
+                TimerPayLoad.TYPE,
+                TimerPayLoad.STREAM_CODEC,
+                ClientPayLoadHandler::handle
+        );
     }
 }

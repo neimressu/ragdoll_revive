@@ -1,10 +1,12 @@
 package com.neimressu.ragdollRevive;
 
+import com.neimressu.ragdollRevive.Network.TimerPayLoad;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 
@@ -49,6 +51,7 @@ public class TickHandler {
             ReviveManager.DYING.remove(
                     player.getUUID()
             );
+            PacketDistributor.sendToPlayer(player, new TimerPayLoad(0,1));
         }
     }
 }

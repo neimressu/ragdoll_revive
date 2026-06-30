@@ -1,5 +1,10 @@
 {
-  "itemGroup.ragdoll_revive": "Example Mod Tab",
-  "block.ragdoll_revive.example_block": "Example Block",
-  "item.ragdoll_revive.example_item": "Example Item"
+  "text.player.is_dying": "You are dying! Other players have %s seconds to revive you",
+  "text.player.can_give_up": "Or you can give up, by holding %s for %s seconds",
+  "text.player.target.revived" : "You have been revived by %s",
+  "text.player.reviver.revived" : "You have revived %s",
+  "text.player.target.extended" : "Your revive time has been extended",
+  "text.player.revived.extended" : "You have extended revive time of %s by %s seconds",
+  "text.gui.client.give_up" : "You will give up in: %s",
+  "text.gui.client.revive_time_left" : "Time left: %s"
 }

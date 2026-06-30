@@ -1,0 +1,10 @@
+{
+  "text.player.is_dying": "Вы умираете! У других игроков есть %s секунд, чтобы вас возродить",
+  "text.player.can_give_up": "Или вы можете сдаться, удерживая %s в течение %s секунд",
+  "text.player.target.revived": "Вас возродил %s",
+  "text.player.reviver.revived": "Вы возродили %s",
+  "text.player.target.extended": "Ваше время на возрождение было увеличено",
+  "text.player.revived.extended": "Вы увеличили время возрождения игрока %s на %s секунд",
+  "text.gui.client.give_up": "Вы сдадитесь через: %s",
+  "text.gui.client.revive_time_left": "Оставшееся время: %s"
+}

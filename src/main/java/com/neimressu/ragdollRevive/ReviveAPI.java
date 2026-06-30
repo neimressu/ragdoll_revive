@@ -1,18 +1,16 @@
 package com.neimressu.ragdollRevive;
 
+import com.neimressu.ragdollRevive.Network.TimerPayLoad;
 import dev.leo.sableplayerragdoll.api.RagdollAPI;
 import dev.leo.sableplayerragdoll.api.RagdollSession;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
-
-import java.sql.Array;
-import java.util.AbstractList;
-import java.util.ArrayList;
 
 public final class ReviveAPI {
 
@@ -47,6 +45,7 @@ public final class ReviveAPI {
         ReviveManager.GIVINGUP.remove(
                 target.getUUID()
         );
+        PacketDistributor.sendToPlayer(target, new TimerPayLoad(0,1));
         target.setHealth(ReviveManager.getHealthAfterRevive());
 
         NeoForge.EVENT_BUS.post(new PlayerRevivedEvent(target, reviver));
@@ -62,6 +61,7 @@ public final class ReviveAPI {
                 data.session(),
                 data.damageSource()
         ));
+        PacketDistributor.sendToPlayer(target, new TimerPayLoad(ticks,3));
     }
 
     public static void killDyingPlayer(ServerPlayer target) {
@@ -83,11 +83,6 @@ public final class ReviveAPI {
         ReviveManager.GIVINGUP.remove(
                 target.getUUID()
         );
-    }
-
-    public AbstractList<ReviveManager.DyingPlayer> getDyingPlayers() {
-        return new ArrayList<>(
-                ReviveManager.DYING.values()
-        );
+        PacketDistributor.sendToPlayer(target, new TimerPayLoad(0,1));
     }
 }
