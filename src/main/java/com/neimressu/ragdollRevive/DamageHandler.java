@@ -22,8 +22,6 @@ import org.apache.logging.log4j.Logger;
 @EventBusSubscriber(modid = RagdollRevive.MODID)
 public class DamageHandler {
 
-    private static final Logger log = LogManager.getLogger(DamageHandler.class);
-
     @SubscribeEvent
     public static void onDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player))

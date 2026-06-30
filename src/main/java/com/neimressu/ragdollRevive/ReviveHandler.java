@@ -19,8 +19,6 @@ import org.apache.logging.log4j.Logger;
 @EventBusSubscriber(modid = RagdollRevive.MODID)
 public class ReviveHandler {
 
-    private static final Logger log = LogManager.getLogger(ReviveHandler.class);
-
     @SubscribeEvent
     public static void onUse(PlayerInteractEvent.RightClickItem event) {
 
@@ -45,6 +43,7 @@ public class ReviveHandler {
 
         if (!(be instanceof RagdollPartBlockEntity ragdollPart)) return;
 
+        assert be.getLevel() != null;
         var provider = be.getLevel().registryAccess();
         String skinName = ragdollPart.saveWithFullMetadata(provider).getString("SkinName");
 

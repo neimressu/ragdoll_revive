@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 @Mod(RagdollRevive.MODID)
 public class RagdollRevive {
     public static final String MODID = "ragdoll_revive";
-    private static final Logger log = LoggerFactory.getLogger(RagdollRevive.class);
 
     public RagdollRevive(IEventBus modEventBus, ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC);

@@ -5,6 +5,8 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
+
 import static com.neimressu.ragdollRevive.RagdollRevive.MODID;
 
 public record TimerPayLoad(int timerLeft, int timerType) implements CustomPacketPayload {
@@ -20,7 +22,7 @@ public record TimerPayLoad(int timerLeft, int timerType) implements CustomPacket
             );
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 }

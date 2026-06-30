@@ -14,8 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 public final class ReviveAPI {
 
-    private static final Logger log = LogManager.getLogger(ReviveAPI.class);
-
     /**
      * A method for programmatically reviving a player. It can be called from anywhere, including commands or other mods.
      * * @param target The player to be revived.
